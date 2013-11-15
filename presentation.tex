@@ -63,10 +63,9 @@ text = "baa baa black sheep".split()
 
 freqcount = dict()
 for word in text:
-    if word in freqcount:
-        freqcount[word] += 1
-    else:
-        freqcount[word] = 1
+    if word not in freqcount:
+        freqcount[word] = 0
+    freqcount[word] += 1
 
 print freqcount
 
@@ -96,6 +95,7 @@ for word in text:
 print freqcount
 # defaultdict(<type 'int'>, {'sheep': 1, 'black': 1, 'baa': 2})
 \end{lstlisting}
+
 \end{lrbox}
 
 \begin{frame}{...made Pythonic}
@@ -136,18 +136,22 @@ print freqcount
       & value   & \\
    \lstinline$d = defaultdict(int)$  & \lstinline$0$ & \lstinline$d[key] += 1$ \\
    \lstinline$d = defaultdict(list)$ & \lstinline$[]$ & \lstinline$d[key].append(listitem)$ \\
+   \lstinline$d = defaultdict(set)$  & \lstinline$set([])$ & \lstinline$d[key].add(setitem)$ \\
    \lstinline$d = defaultdict(dict)$ & \lstinline$\{\}$ & \lstinline$d[key][secondkey] = val$ \\
  \end{tabular}
 \end{frame}
 
 \begin{frame}{Beyond just types}
- \lstinline$int$, \lstinline$list$ and \lstinline$dict$ are just functions that can take zero arguments.
- \lstinline$int() = 0, list() = [], dict() = \{\}$.
+ \lstinline$int$, \lstinline$list$, \lstinline$set$ and \lstinline$dict$ are just functions that can take zero arguments.
+
+ \bigskip 
+ 
+ \lstinline$int() = 0, list() = [], set() = set([]), dict() = \{\}$.
 
  \bigskip
 
  If we supply \lstinline$defaultdict$ with a function \lstinline$func$ that takes no arguments,
- and it will initialize any unseen key with \lstinline$func()$!
+ it will initialize any unseen key with \lstinline$func()$!
 \end{frame}
 
 \begin{lrbox}{\mysavebox}
@@ -164,6 +168,9 @@ for word in text:
     freqcount[word] += 1
 
 print freqcount 
+
+# defaultdict(<function startatten at 0x127d140>, {'sheep': 11, 'black': 11, 'baa': 12})
+
 \end{lstlisting}
 \end{lrbox}
 
@@ -182,25 +189,35 @@ print freqcount
 
 % introduction to lambdas
 
-Instead of defining \lstinline$startatten$, we can also use anonymous functions.
+Instead of defining \lstinline$startatten$, we can also define an anonymous function using \lstinline$lambda$.
 
 \bigskip
 
-These are equivalent:
+\lstinline$lambda: 10$ is an anonymous function that does the same work as \lstinline$startatten$.
 
 \bigskip
 
-\lstinline$def startatten: return 10$
-
-\lstinline$startatten = lambda: 10$
-
-\bigskip
-
-\lstinline$def addtwo(n): return n+2 $
-
-\lstinline$addtwo = lambda n: n+2$
-
+\lstinline$(lambda: 10)()$ returns 10.
 \end{frame}
+
+%\begin{frame}{Using anonymous functions}
+%
+%These are equivalent:
+%
+%\bigskip
+%
+%\lstinline$startatten = lambda: 10$
+%
+%\lstinline$def startatten: return 10$
+%
+%\bigskip
+%
+%\lstinline$addtwo = lambda n: n+2$
+%
+%\lstinline$def addtwo(n): return n+2 $
+%
+%
+%\end{frame}
 
 
 \begin{lrbox}{\mysavebox}
@@ -221,9 +238,6 @@ print freqcount
  
 \vspace{-1em}
 {\usebox{\mysavebox}}
-
-%\lstinline$# defaultdict(<function startatten at 0xa8eed8>,$ %TODO : run to get different memloc 
-%\lstinline$#     {'sheep': 11, 'black': 11, 'baa': 12})$
 
 \vspace{1em}
 \end{frame}
@@ -267,7 +281,7 @@ mydict["baa"]
 \end{lstlisting}
 \end{lrbox}
 
-\begin{frame}{Going deeper}
+\begin{frame}{Another variation}
  What if I want to make the default value dependent on the key?
 
  \bigskip
@@ -306,9 +320,14 @@ Credit: Carsten Haese (comp.lang.python)
 
 \end{frame}
 
-\begin{frame}{}
+\begin{frame}{Thank you!}
 
-\begin{center}Thanks!\end{center}
+Resources used:
+\begin{itemize}
+  \item \url{http://docs.python.org/2/library/collections.html}
+  \item \url{http://www.itmaybeahack.com/homepage/books/nonprog/html/p10_set_map/p10_c04_defaultdict.html}
+  \item \url{https://groups.google.com/forum/\#!topic/comp.lang.python/lRnIhaJKZeo}
+\end{itemize}
 
 \end{frame}
 
