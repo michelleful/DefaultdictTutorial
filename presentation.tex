@@ -1,7 +1,7 @@
 \documentclass{beamer}
 \usepackage[latin1]{inputenc}
 \usetheme{boxes}
-\title[defaultdict]{Lightning Talk on defaultdict}
+\title[defaultdict]{defaultdict tutorial}
 \author{Michelle Fullwood}
 \date{}
 \usepackage{color}
@@ -106,9 +106,31 @@ print freqcount
 
 \begin{frame}{Behind the scenes}
  % maybe a slide on what defaultdict actually does?
+
+\begin{itemize}
+  \item \lstinline$defaultdict$ is a subclass of \lstinline$dict$.
+  \item Additional instance variable: \lstinline$default_factory$ \\
+        (instantiated with \lstinline$int$ in our example).
+  \item Additional function:  \lstinline$__missing__(key)$, returns \lstinline$default_factory()$. 
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Other possibilities}
+\begin{frame}{Behind the scenes}
+\begin{itemize}
+
+  \item When calling \lstinline$defaultdict[key]$:
+    \begin{itemize}
+      \item Call \lstinline$dict.__getitem__(key)$. This returns the existing value if the key exists.
+      \item If the key doesn't exist in the dictionary, normally this raises a \lstinline$KeyError$.
+      \item In a \lstinline$defaultdict$, however, the function \lstinline$__missing__(key)$ is called instead.
+      \item This returns \lstinline$default_factory()$, in our example \lstinline$int()$, which is just 0.
+    \end{itemize}
+  
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Other possibilities for default\_factory}
  \begin{tabular}{lcl}
       & Default & \\
       & value   & \\
@@ -120,7 +142,7 @@ print freqcount
 
 \begin{frame}{Beyond just types}
  \lstinline$int$, \lstinline$list$ and \lstinline$dict$ are just functions that can take zero arguments.
- \lstinline$int() = 0, list() = list[], dict() = \{\}$.
+ \lstinline$int() = 0, list() = [], dict() = \{\}$.
 
  \bigskip
 
@@ -214,7 +236,7 @@ from collections import defaultdict
 # count bigrams in text
 bigram_count = defaultdict(lambda: defaultdict(int))
 
-for word1, word2 in : # TODO
+for word1, word2 in bigrams:
 	bigram_count[word1][word2] += 1
 
 \end{lstlisting}
@@ -247,10 +269,12 @@ mydict["baa"]
 
 \begin{frame}{Going deeper}
  What if I want to make the default value dependent on the key?
- 
+
+ \bigskip
+
  Answer: subclass defaultdict
  
-\vspace{1.5em}
+\vspace{1em}
 {\usebox{\mysavebox}}
     
 \end{frame}
@@ -264,7 +288,7 @@ class recursivedefaultdict(defaultdict):
     def __init__(self):
         self.default_factory = type(self)
 
-mydict=recursivedefaultdict(int):
+mydict = recursivedefaultdict(int):
 mydict["To"]["infinity"]["and"]["beyond"]
 
 \end{lstlisting}
@@ -281,4 +305,11 @@ Infinitely-nested defaultdict
 Credit: Carsten Haese (comp.lang.python)
 
 \end{frame}
+
+\begin{frame}{}
+
+\begin{center}Thanks!\end{center}
+
+\end{frame}
+
 \end{document}
