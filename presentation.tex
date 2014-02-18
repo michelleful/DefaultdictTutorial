@@ -54,6 +54,11 @@
 \titlepage
 \end{frame}
 
+\begin{frame}{Motivation}
+ Common task in text processing: doing a frequency count.
+ 
+ \includegraphics[scale=0.35]{holmes_wordle.png} 
+\end{frame}
 
 \begin{lrbox}{\mysavebox}
 \begin{lstlisting}
@@ -104,8 +109,48 @@ print freqcount
 \vspace{1em}
 \end{frame}
 
+\lstset{ %
+  basicstyle=\ttfamily\scriptsize,        % the size of the fonts that are used for the code
+}
+
+\begin{lrbox}{\mysavebox}
+\begin{lstlisting}
+class defaultdict(dict):
+
+  def __init__(self, default_factory=None, *a, **kw):
+    if (default_factory is not None and
+        not hasattr(default_factory, '__call__')):
+      raise TypeError('first argument must be callable')
+      dict.__init__(self, *a, **kw)
+      self.default_factory = default_factory
+
+  def __missing__(self, key):
+    if self.default_factory is None:
+      raise KeyError(key)
+    self[key] = value = self.default_factory()
+    return value
+
+  def __getitem__(self, key):
+    try:
+      return dict.__getitem__(self, key)
+    except KeyError:
+      return self.__missing__(key)
+\end{lstlisting}
+
+\end{lrbox}
+
+\begin{frame}{How the source code would look}
+\vspace{0.5em}
+{\usebox{\mysavebox}}
+\vspace{1em}
+{\scriptsize (Credit: Jason Kirtland, ActiveState code Python recipes})
+\end{frame}
+
+\lstset{ %
+  basicstyle=\ttfamily\normalsize,        % the size of the fonts that are used for the code
+}
+
 \begin{frame}{Behind the scenes}
- % maybe a slide on what defaultdict actually does?
 
 \begin{itemize}
   \item \lstinline$defaultdict$ is a subclass of \lstinline$dict$.
@@ -140,6 +185,27 @@ print freqcount
    \lstinline$d = defaultdict(dict)$ & \lstinline$\{\}$ & \lstinline$d[key][secondkey] = val$ \\
  \end{tabular}
 \end{frame}
+
+\begin{frame}{Exercises}
+ \begin{enumerate}
+  \item Read in a text file \\ {\scriptsize (example: {\url https://sherlock-holm.es/stories/plain-text/blue.txt})}
+  \item Process each line word by word
+  \item Compile the following information:
+    \begin{itemize}
+     \item A frequency count
+     \item The line numbers in which each word occurred. \\
+           {\scriptsize (If a word occurs multiple times in one line, don't collapse them.)}
+     \item List of words occurring in the text, classified by length
+    \end{itemize}
+  \item Print out the following information:
+     \begin{itemize}
+       \item The top 20 most frequent words. 
+       \item The line numbers of the top 20 most frequent words.
+       \item The number of word types of each length
+     \end{itemize}
+ \end{enumerate} 
+\end{frame}
+
 
 \begin{frame}{Beyond just types}
  \lstinline$int$, \lstinline$list$, \lstinline$set$ and \lstinline$dict$ are just functions that can take zero arguments.
@@ -225,12 +291,18 @@ Instead of defining \lstinline$startatten$, we can also define an anonymous func
 text = "baa baa black sheep".split()
 
 # frequency count for words in some text
+# with add-one smoothing
+
 from collections import defaultdict
-freqcount = defaultdict(lambda: 10)
+freqcount = defaultdict(lambda: 1)
 for word in text:
     freqcount[word] += 1
 
 print freqcount 
+
+
+# defaultdict(<type 'int'>, {'sheep': 2, 'black': 2, 'baa': 3})
+
 \end{lstlisting}
 \end{lrbox}
 
@@ -263,6 +335,8 @@ for word1, word2 in bigrams:
 {\usebox{\mysavebox}}
    
 \end{frame}
+
+
 
 \begin{lrbox}{\mysavebox}
 \begin{lstlisting}
@@ -324,7 +398,9 @@ Credit: Carsten Haese (comp.lang.python)
 
 Resources used:
 \begin{itemize}
+  \item \url{wordle.org}
   \item \url{http://docs.python.org/2/library/collections.html}
+  \item \url{http://code.activestate.com/recipes/523034-emulate-collectionsdefaultdict/}
   \item \url{http://www.itmaybeahack.com/homepage/books/nonprog/html/p10_set_map/p10_c04_defaultdict.html}
   \item \url{https://groups.google.com/forum/\#!topic/comp.lang.python/lRnIhaJKZeo}
 \end{itemize}
